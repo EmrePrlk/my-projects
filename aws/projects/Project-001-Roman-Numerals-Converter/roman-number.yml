@@ -8,11 +8,8 @@ Parameters:
   KeyName:
     Description: Enter the name of your Key Pair for SSH connections
     Type: AWS::EC2::KeyPair::KeyName
-    
 
 
-
-  
 Resources:
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -27,18 +24,17 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-  
+
   WebServerHost:
     Type: AWS::EC2::Instance
-    Properties: 
+    Properties:
       KeyName: !Ref KeyName
       ImageId: ami-033b95fb8079dc481
       InstanceType: t2.micro
-      Monitoring: true|false
       SecurityGroupIds:
         - !Ref WebServerSecurityGroup
       UserData: !Base64 |
-        #!/bin/bash -ex
+        #!/bin/bash 
         yum update -y
         yum install python3 -y
         pip3 install flask
@@ -53,7 +49,6 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub Web Server of ${AWS::StackName} Stack
-
 
 Outputs:
   WebsiteURL:
