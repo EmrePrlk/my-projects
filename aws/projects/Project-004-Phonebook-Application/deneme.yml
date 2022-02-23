@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  
+Parameters:
+  myVPC:
+    Description: 
+    Type: AWS::EC2::VPC::Id
+  
+  myIT:
+    Description: select instance type
+    Type: List<AWS::EC2::Instance::Id>
+    Default: t2.micro
+    AllowedValues:
+  
+  
+Mappings:
+  RegionImageMap:
+    us-east-1:
+      AMI: ami-0dc2d3e4c0f9ebd18
+    us-east-2:
+      AMI: ami-0233c2d874b811deb
+    us-west-1:
+      AMI: ami-0ed05376b59b90e46
+    us-west-2:
+      AMI: ami-0dc8f589abe99f538
+    eu-west-1:
+      AMI: ami-058b1b7fe545997ae
+
+  
+  
+Resources:
+  myLT:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+        ImageId: !FindInMap
+          - RegionImageMap
+          - !Ref AWS::Region
+          - AMI
+        InstanceType: "String"
+        KernelId: "String"
+        KeyName: "String"
+        LicenseSpecifications:
+          -
+        NetworkInterfaces:
+          -
+        RamDiskId: "String"
+        SecurityGroupIds:
+          -
+        SecurityGroups:
+          -
+        TagSpecifications:
+          -
+        UserData: "String"
+      LaunchTemplateName: "String"
+      TagSpecifications:
+        TagSpecifications
+
+
+
+
+
+
+
+  ALBSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: enable HTTP and ELB # Required
+      SecurityGroupIngress:
+          - CidrIp: 0.0.0.0/0
+            FromPort: 80
+            IpProtocol: tcp # Required
+            ToPort: 80
+      VpcId: !Ref myVPC
+
+  EC2SecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: enable HTTP and TCP # Required
+      SecurityGroupIngress:
+          - CidrIp: 0.0.0.0/0
+            FromPort: 22
+            IpProtocol: tcp # Required
+            ToPort: 22
+
+
+          - CidrIp: 0.0.0.0/0
+            FromPort: 80
+            IpProtocol: tcp # Required
+            SourceSecurityGroupId: !GetAtt ALBSecGroup.GroupId
+            ToPort: 80
+      VpcId: !Ref myVPC
+
+
+  
+  
+Outputs:
